@@ -1,91 +1,78 @@
-// src/assets/ContactForm.jsx
-import React, { useState, useEffect } from 'react';
-import { collection, addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore';
 import { db } from '../db';
 
-export default function ContactForm({ editMode = false }) {
-  const { id } = useParams();
+export default function ContactForm() {
+  const { id } = useParams(); // id is undefined when adding new
+  const isEdit = !!id;
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [contact, setContact] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    email: ''
   });
 
   useEffect(() => {
-    if (editMode && id) {
-      async function fetchContact() {
-        const docRef = doc(db, 'contacts', id);
-        const docSnap = await getDoc(docRef);
+    if (isEdit) {
+      const docRef = doc(db, 'contacts', id);
+      getDoc(docRef).then(docSnap => {
         if (docSnap.exists()) {
-          setFormData(docSnap.data());
+          setContact(docSnap.data());
         } else {
           navigate('/');
         }
-      }
-      fetchContact();
+      });
     }
-  }, [editMode, id, navigate]);
+  }, [id, isEdit, navigate]);
 
-  function handleChange(e) {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  }
+  const handleChange = e => {
+    setContact(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    if (editMode) {
-      const docRef = doc(db, 'contacts', id);
-      await updateDoc(docRef, formData);
+    if (isEdit) {
+      await setDoc(doc(db, 'contacts', id), contact);
       navigate(`/contact/${id}`);
     } else {
-      const colRef = collection(db, 'contacts');
-      const docRef = await addDoc(colRef, formData);
+      const docRef = await addDoc(collection(db, 'contacts'), contact);
       navigate(`/contact/${docRef.id}`);
     }
-  }
+  };
 
   return (
     <div>
-      <h2>{editMode ? 'Edit Contact' : 'New Contact'}</h2>
+      <h2>{isEdit ? 'Edit Contact' : 'Add New Contact'}</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          First Name:
-          <input
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-        </label>
+        <input
+          name="firstName"
+          value={contact.firstName}
+          onChange={handleChange}
+          placeholder="First Name"
+          required
+        />
         <br />
-        <label>
-          Last Name:
-          <input
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </label>
+        <input
+          name="lastName"
+          value={contact.lastName}
+          onChange={handleChange}
+          placeholder="Last Name"
+          required
+        />
         <br />
-        <label>
-          Email:
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            type="email"
-            required
-          />
-        </label>
+        <input
+          name="email"
+          type="email"
+          value={contact.email}
+          onChange={handleChange}
+          placeholder="Email"
+          required
+        />
         <br />
-        <button type="submit">{editMode ? 'Update' : 'Add'} Contact</button>
+        <button type="submit">{isEdit ? 'Update' : 'Add'}</button>
       </form>
     </div>
   );

@@ -1,7 +1,6 @@
-// src/assets/ContactDetails.jsx
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../db';
 
 export default function ContactDetails() {
@@ -10,41 +9,32 @@ export default function ContactDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchContact() {
-      const docRef = doc(db, 'contacts', id);
-      const docSnap = await getDoc(docRef);
-
+    const docRef = doc(db, 'contacts', id);
+    getDoc(docRef).then(docSnap => {
       if (docSnap.exists()) {
-        setContact(docSnap.data());
+        setContact({ id: docSnap.id, ...docSnap.data() });
       } else {
-        navigate('/');
+        navigate('/'); // Redirect if no doc found
       }
-    }
-    fetchContact();
+    });
   }, [id, navigate]);
 
-  async function handleDelete() {
-    if (window.confirm('Are you sure you want to delete this contact?')) {
-      await deleteDoc(doc(db, 'contacts', id));
-      navigate('/');
-    }
-  }
+  const handleDelete = async () => {
+    await deleteDoc(doc(db, 'contacts', id));
+    navigate('/');
+  };
 
-  if (!contact) return <div>Loading...</div>;
+  if (!contact) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2>Contact Details</h2>
-      <p><strong>First Name:</strong> {contact.firstName}</p>
-      <p><strong>Last Name:</strong> {contact.lastName}</p>
-      <p><strong>Email:</strong> {contact.email}</p>
-
-      <Link to={`/edit/${id}`}>
-        <button>Edit</button>
-      </Link>
+      <h2>{contact.firstName} {contact.lastName}</h2>
+      <p>Email: {contact.email}</p>
+      {/* Add more fields as needed */}
+      <Link to={`/edit/${contact.id}`}>Edit</Link>
       <button onClick={handleDelete}>Delete</button>
       <br />
-      <Link to="/">Back to List</Link>
+      <Link to="/">Back to Contact List</Link>
     </div>
   );
 }
