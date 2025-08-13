@@ -1,12 +1,13 @@
 {
   "name": "mtm6404-contact-book-react",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
+  "homepage": "https://erha0006.github.io/mtm6404-contact-book-react",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "firebase": "^12.1.0",

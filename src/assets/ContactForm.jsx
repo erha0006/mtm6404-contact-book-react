@@ -1,47 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore';
-import { db } from '../db';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore'
+import { db } from '../db'
 
 export default function ContactForm() {
-  const { id } = useParams();
-  const isEdit = !!id;
-  const navigate = useNavigate();
+  const { id } = useParams()
+  const isEdit = !!id
+  const navigate = useNavigate()
 
   const [contact, setContact] = useState({
     firstName: '',
     lastName: '',
     email: ''
-  });
+  })
 
   useEffect(() => {
     if (isEdit) {
-      const docRef = doc(db, 'contacts', id);
+      const docRef = doc(db, 'contacts', id)
       getDoc(docRef).then(docSnap => {
         if (docSnap.exists()) {
-          setContact(docSnap.data());
+          setContact(docSnap.data())
         } else {
-          navigate('/');
+          navigate('/contacts')
         }
-      });
+      })
     }
-  }, [id, isEdit, navigate]);
+  }, [id, isEdit, navigate])
 
   const handleChange = e => {
-    setContact(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+    setContact(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
   const handleSubmit = async e => {
-    e.preventDefault();
-
+    e.preventDefault()
     if (isEdit) {
-      await setDoc(doc(db, 'contacts', id), contact);
-      navigate(`/contact/${id}`);
+      await setDoc(doc(db, 'contacts', id), contact)
+      navigate(`/contacts/${id}`)
     } else {
-      const docRef = await addDoc(collection(db, 'contacts'), contact);
-      navigate(`/contact/${docRef.id}`);
+      const docRef = await addDoc(collection(db, 'contacts'), contact)
+      navigate(`/contacts/${docRef.id}`)
     }
-  };
+  }
 
   return (
     <div>
@@ -53,6 +52,7 @@ export default function ContactForm() {
           onChange={handleChange}
           placeholder="First Name"
           required
+          style={{ marginBottom: '0.5em', padding: '0.5em', width: '100%', maxWidth: '300px' }}
         />
         <br />
         <input
@@ -61,6 +61,7 @@ export default function ContactForm() {
           onChange={handleChange}
           placeholder="Last Name"
           required
+          style={{ marginBottom: '0.5em', padding: '0.5em', width: '100%', maxWidth: '300px' }}
         />
         <br />
         <input
@@ -70,10 +71,13 @@ export default function ContactForm() {
           onChange={handleChange}
           placeholder="Email"
           required
+          style={{ marginBottom: '0.5em', padding: '0.5em', width: '100%', maxWidth: '300px' }}
         />
         <br />
-        <button type="submit">{isEdit ? 'Update' : 'Add'}</button>
+        <button type="submit" style={{ padding: '0.5em 1em' }}>
+          {isEdit ? 'Update' : 'Add'}
+        </button>
       </form>
     </div>
-  );
+  )
 }
