@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore';
 import { db } from '../db';
 
 export default function ContactForm() {
-  const { id } = useParams(); // id is undefined when adding new
+  const { id } = useParams();
   const isEdit = !!id;
   const navigate = useNavigate();
 

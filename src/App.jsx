@@ -5,8 +5,8 @@ import ContactForm from './assets/ContactForm';
 
 function App() {
   return (
-    <BrowserRouter basename="/mtm6404-contact-book-react">
-      <Routes>
+<BrowserRouter basename="/mtm6404-contact-book-react/">
+<Routes>
         <Route path="/" element={<ContactList />} />
         <Route path="/contact/:id" element={<ContactDetails />} />
         <Route path="/new" element={<ContactForm />} />

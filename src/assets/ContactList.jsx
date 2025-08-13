@@ -1,55 +1,32 @@
-// src/assets/ContactList.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../db';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
-function ContactList() {
+export default function ContactList() {
   const [contacts, setContacts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const q = query(collection(db, 'contacts'), orderBy('lastName'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const contactsArray = [];
-      querySnapshot.forEach((doc) => {
-        contactsArray.push({ id: doc.id, ...doc.data() });
-      });
-      setContacts(contactsArray);
+    const unsubscribe = onSnapshot(q, snapshot => {
+      setContacts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  // Filter contacts by first or last name based on searchTerm
-  const filteredContacts = contacts.filter(({ firstName, lastName }) => {
-    const fullName = `${firstName} ${lastName}`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
-  });
-
   return (
     <div>
-      <h2>Contact List</h2>
-      <input
-        type="text"
-        placeholder="Search contacts..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+      <h1>Contact List</h1>
+      <Link to="/new">Add New Contact</Link>
       <ul>
-        {filteredContacts.map(({ id, firstName, lastName, email }) => (
-          <li key={id}>
-            <Link to={`/contacts/${id}`}>
-              {lastName}, {firstName}
-            </Link>{' '}
-            - {email}
+        {contacts.map(contact => (
+          <li key={contact.id}>
+            <Link to={`/contact/${contact.id}`}>
+              {contact.firstName} {contact.lastName}
+            </Link>
           </li>
         ))}
       </ul>
-      <Link to="/contacts/new">Add New Contact</Link>
     </div>
   );
 }
-
-export default ContactList;
