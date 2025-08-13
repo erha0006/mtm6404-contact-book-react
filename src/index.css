@@ -31,7 +31,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  justify-content: center; /* add horizontal centering */
+  justify-content: center; 
   background-color: var(--background, #242424);
 }
 
@@ -59,18 +59,16 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Main app container */
 #root {
   max-width: 1280px;
   width: 100%;
   padding: 2rem;
   text-align: center;
-  background: #1e1e1e; /* darker container */
+  background: #1e1e1e; 
   box-shadow: 0 0 10px rgba(0,0,0,0.7);
   border-radius: 8px;
 }
 
-/* Logo styles */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -83,7 +81,6 @@ button:focus-visible {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-/* Keyframes for logo spin */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -93,19 +90,16 @@ button:focus-visible {
   }
 }
 
-/* Spin animation if user allows motion */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
 }
 
-/* Card style */
 .card {
   padding: 2em;
 }
 
-/* Read the docs text style */
 .read-the-docs {
   color: #888;
 }
